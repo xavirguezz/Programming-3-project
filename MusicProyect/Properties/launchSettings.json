@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MusicProyect": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\elcor\\OneDrive\\Escritorio\\music\\My_Way_-_Frank_Sinatra.wav\" \"C:\\Users\\elcor\\OneDrive\\Escritorio\\music\\Spandau_Ballet_-_Gold.wav\""
+    }
+  }
+}
