@@ -4,7 +4,7 @@ using Timer = System.Timers.Timer;
 
 namespace MusicCatalog;
 
-public class MusicPlayer : PlayerBase, IDisposable
+public class MusicPlayer : IDisposable
 {
     private readonly SoundPlayer player = new();
     private readonly PlayQueue queue = new();
@@ -14,6 +14,9 @@ public class MusicPlayer : PlayerBase, IDisposable
 
     public Song? Current { get; private set; }
 
+    // Eventos (antes estaban en PlayerBase)
+    public event EventHandler<SongEventArgs>? SongStarted;
+    public event EventHandler<SongEventArgs>? SongFinished;
     public event EventHandler<SongEventArgs>? SongEnqueued;
     public event EventHandler? QueueEmpty;
 
@@ -24,6 +27,12 @@ public class MusicPlayer : PlayerBase, IDisposable
         timer.Elapsed += OnTimerElapsed;
     }
 
+    protected virtual void OnSongStarted(Song song) =>
+        SongStarted?.Invoke(this, new SongEventArgs(song));
+
+    protected virtual void OnSongFinished(Song song) =>
+        SongFinished?.Invoke(this, new SongEventArgs(song));
+
     public void Enqueue(Song song)
     {
         queue.Enqueue(song);
@@ -32,7 +41,7 @@ public class MusicPlayer : PlayerBase, IDisposable
 
     public List<Song> Pending => queue.ToList();
 
-    public override void Play(Song song)
+    public void Play(Song song)
     {
         lock (sync)
         {
@@ -71,7 +80,7 @@ public class MusicPlayer : PlayerBase, IDisposable
         Play(next);
     }
 
-    public override void Stop()
+    public void Stop()
     {
         playingQueue = false;
         lock (sync)
